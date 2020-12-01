@@ -1,0 +1,238 @@
+<!-- run locally with 
+    python -m http.server
+-->
+<head>
+    <script type="text/javascript">
+        function log(logMessage) {
+            console.log(logMessage);
+        }
+
+        const serviceUuid = "00001000-0000-1000-8000-00805f9b34fb";
+        const characteristicUuid = "00001001-0000-1000-8000-00805f9b34fb";
+
+        /*
+            SEND_COLOR_TYPE_Multi: AD02021D = 5451D72E81819E
+            SEND_COLOR_TYPE_White: AD020200 = 54511EE748484A
+            SEND_COLOR_TYPE_ONE:   AD0201   = 54500AF35C5F
+            SEND_COLOR_TYPE_TWO:   AD020200 = 545158A10E0E0C
+            SEND_COMMON_LIGHT_OFF: AD0300   = 545000F95754
+            SEND_COMMON_LIGHT_ON:  AD0301   = 5450DB228C8E
+            
+            SEND_NINE_TYPE_EIGHT_BRIGHT_ZERO:        AD010800   = 5451C73E929B93
+            SEND_NINE_TYPE_EIGHT_BRIGHT_ZERO White:  AD01080001 = 54522BD27E777F7E  
+            SEND_NINE_TYPE_EIGHT_BRIGHT_ZERO Multi:  AD01080002 = 545218E14D444C4E
+            SEND_NINE_TYPE_EIGHT_BRIGHT_0NE:         AD010801   = 54516F963A333A
+            SEND_NINE_TYPE_EIGHT_BRIGHT_0NE White:   AD01080101 = 545211E8444D4444
+            SEND_NINE_TYPE_EIGHT_BRIGHT_0NE Multi:   AD01080102 = 5452748D21282122  
+            SEND_NINE_TYPE_EIGHT_BRIGHT_TWO:         AD010802   = 5451BF46EAE3E9
+            SEND_NINE_TYPE_EIGHT_BRIGHT_TWO White:   AD01080201 = 54522BD27E777D7E
+            SEND_NINE_TYPE_EIGHT_BRIGHT_TWO Multi:   AD01080202 = 5452679E323B3131  
+            SEND_NINE_TYPE_EIGHT_BRIGHT_THREE:       AD010803   = 54516099353C37
+            SEND_NINE_TYPE_EIGHT_BRIGHT_THREE White: AD01080301 = 5452AB52FEF7FCFE
+            SEND_NINE_TYPE_EIGHT_BRIGHT_THREE Multi: AD01080302 = 54529960CCC5CECF
+
+            SEND_NINE_TYPE_ONE:         AD010100   = 5451AE57FBFBFA
+            SEND_NINE_TYPE_ONE White:   AD01010001 = 545254AD01010001
+            SEND_NINE_TYPE_ONE Multi:   AD01010002 = 54528A73DFDFDEDC
+            SEND_NINE_TYPE_TWO:         AD010200   = 545102FB575456
+            SEND_NINE_TYPE_TWO White:   AD01020001 = 545214ED41424041
+            SEND_NINE_TYPE_TWO Multi:   AD01020002 = 5452DB228E8D8F8D
+            SEND_NINE_TYPE_THREE:       AD010300   = 54515DA4080A09
+            SEND_NINE_TYPE_THREE White: AD01030001 = 54528178D4D6D5D4
+            SEND_NINE_TYPE_THREE Multi: AD01030002 = 545255AC00020103
+            SEND_NINE_TYPE_FOUR:        AD010400   = 5451CB329E9B9F
+            SEND_NINE_TYPE_FOUR White:  AD01040001 = 54529A63CFCACECF
+            SEND_NINE_TYPE_FOUR Multi:  AD01040002 = 5452D32A86838785
+            SEND_NINE_TYPE_FIVE:        AD010500   = 545153AA060207
+            SEND_NINE_TYPE_FIVE White:  AD01050001 = 545279802C282D2C
+            SEND_NINE_TYPE_FIVE Multi:  AD01050002 = 545259A00C080D0F
+            SEND_NINE_TYPE_SIX:         AD010600   = 5451926BC7C0C6
+            SEND_NINE_TYPE_SIX White:   AD01060001 = 54522CD5797E7879
+            SEND_NINE_TYPE_SIX Multi:   AD01060002 = 5452CC35999E989A
+            SEND_NINE_TYPE_SEVEN:       AD010700   = 545143BA161017
+            SEND_NINE_TYPE_SEVEN White: AD01070001 = 545212EB47414647
+            SEND_NINE_TYPE_SEVEN Multi: AD01070002 = 5452DD24888E898B
+
+            SEND_FIRST_CLOCK:  AD040000000000 = 545C2CD57C7878787878
+            SEND_SECOND_CLOCK: AD050000000000 = 545CAB52FAFFFFFFFFFF
+        */  
+
+        const SEND_COLOR_TYPE_White = "54511EE748484A"
+        const SEND_COLOR_TYPE_Multi = "5451D72E81819E"
+
+        const SEND_COLOR_TYPE_ONE = "54500AF35C5F"
+        const SEND_COLOR_TYPE_TWO = "545158A10E0E0C"
+
+        const SEND_COMMON_LIGHT_OFF = "545000F95754"
+        const SEND_COMMON_LIGHT_ON = "5450DB228C8E"
+
+        let lightBrightness0 = new Map([ ["default", "5451C73E929B93"], ["white", "54522BD27E777F7E"], ["colour", "545218E14D444C4E"] ]);
+        let lightBrightness1 = new Map([ ["default", "54516F963A333A"], ["white", "545211E8444D4444"], ["colour", "5452748D21282122"] ]);
+        let lightBrightness2 = new Map([ ["default", "5451BF46EAE3E9"], ["white", "54522BD27E777D7E"], ["colour", "5452679E323B3131"] ]);
+        let lightBrightness3 = new Map([ ["default", "54516099353C37"], ["white", "5452AB52FEF7FCFE"], ["colour", "54529960CCC5CECF"] ]);
+
+        let lightPattern1 = new Map([ ["default", "5451AE57FBFBFA"], ["white", "545254AD01010001"], ["colour", "54528A73DFDFDEDC"] ]);
+        let lightPattern2 = new Map([ ["default", "545102FB575456"], ["white", "545214ED41424041"], ["colour", "5452DB228E8D8F8D"] ]);
+        let lightPattern3 = new Map([ ["default", "54515DA4080A09"], ["white", "54528178D4D6D5D4"], ["colour", "545255AC00020103"] ]);
+        let lightPattern4 = new Map([ ["default", "5451CB329E9B9F"], ["white", "54529A63CFCACECF"], ["colour", "5452D32A86838785"] ]);
+        let lightPattern5 = new Map([ ["default", "545153AA060207"], ["white", "545279802C282D2C"], ["colour", "545259A00C080D0F"] ]);
+        let lightPattern6 = new Map([ ["default", "5451926BC7C0C6"], ["white", "54522CD5797E7879"], ["colour", "5452CC35999E989A"] ]);
+        let lightPattern7 = new Map([ ["default", "545143BA161017"], ["white", "545212EB47414647"], ["colour", "5452DD24888E898B"] ]);
+
+        //const SEND_FIRST_CLOCK;
+        //const SEND_SECOND_CLOCK;
+
+        function parseHexString(str) { 
+            var result = [];
+            while (str.length >= 2) { 
+                result.push(parseInt(str.substring(0, 2), 16));
+                str = str.substring(2, str.length);
+            }
+            return result;
+        }
+
+        async function onRequestBluetoothDeviceButtonClick() {
+            try {
+                log('Requesting any Bluetooth Device...');
+                bleLight = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: [serviceUuid] }]
+                    //acceptAllDevices: true, optionalServices: [serviceUuid]
+                    });
+
+                log('Connecting to GATT Server...');
+                const server = await bleLight.gatt.connect();
+
+                log('Getting Service...');
+                const service = await server.getPrimaryService(serviceUuid);
+
+                log('Getting Characteristic...');
+                characteristic = await service.getCharacteristic(characteristicUuid);
+
+                log('Getting Descriptor...');
+                myDescriptor = await characteristic.getDescriptor('gatt.characteristic_user_description');
+
+                //document.querySelector('#writeButton').disabled =
+                //    !characteristic.properties.write;
+
+                log('Reading Descriptor...');
+                const value = await myDescriptor.readValue();
+
+                let decoder = new TextDecoder('utf-8');
+                log('> Characteristic User Description: ' + decoder.decode(value));
+            } catch(error) {
+                //document.querySelector('#writeButton').disabled = true;
+                log('Argh! ' + error);
+            }
+        }
+
+        async function desconnectBluetooth() {
+            if (!bleLight) {
+                return;
+            }
+            log('Disconnecting from Bluetooth Device...');
+            if (bleLight.gatt.connected) {
+                bleLight.gatt.disconnect();
+            } else {
+                log('> Bluetooth Device is already disconnected');
+            }
+
+        }
+
+        async function onWriteButtonClick(operation) {
+            if (!myDescriptor) {
+                return;
+            }
+            let array = new Int8Array(operation);
+            try {
+                log('Setting Characteristic User Description...');
+                await characteristic.writeValue(array);
+
+                //log('> Characteristic User Description changed to: ' + value);
+            } catch(error) {
+                log('Argh! ' + error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>
+        George Smart Lights BLE Test
+    </h1>
+    <input type="button" id="readButton" value="Find Devices" />
+    <input type="button" id="disconnectButton" value="Disconnect" /><br />
+    <br />
+    <input type="button" id="lightsOnButton" value="On" />
+    <input type="button" id="lightsOffButton" value="Off" /><br />
+    <br />
+
+    <input type="radio" id="lightsColourButton" name="lightsColour" value="colour">
+    <label for="lightsColourButton">Colour</label>
+    <input type="radio" id="lightsWhiteButton" name="lightsColour" value="white">
+    <label for="lightsWhiteButton">White</label><br>
+
+    <p>Brightness: 
+    <input type="button" id="lightsBrightness0Button" value="25%" />
+    <input type="button" id="lightsBrightness1Button" value="50%" />
+    <input type="button" id="lightsBrightness2Button" value="75%" />
+    <input type="button" id="lightsBrightness3Button" value="100%" />
+    </p>
+
+    <!-- Combination, In Waves, Sequential, Slow Glow, Chase/Flash, Twinkle/Flash -->
+    <p>Pattern: 
+    <input type="button" id="lightsPattern1Button" value="1" />
+    <input type="button" id="lightsPattern2Button" value="2" />
+    <input type="button" id="lightsPattern3Button" value="3" />
+    <input type="button" id="lightsPattern4Button" value="4" />
+    <input type="button" id="lightsPattern5Button" value="5" />
+    <input type="button" id="lightsPattern6Button" value="6" />
+    <input type="button" id="lightsPattern7Button" value="7" />
+    </p>
+    
+    <!-- <input type="button" id="lightsColourType1Button" value="Colour Type 1" /><br />
+    <input type="button" id="lightsColourType2Button" value="Colour Type 2" /><br />
+    <br /> -->
+    <script type="text/javascript">
+        document.querySelector('#readButton').addEventListener('click', function() { onRequestBluetoothDeviceButtonClick(); });
+        document.querySelector('#disconnectButton').addEventListener('click', function() { desconnectBluetooth(); });
+
+        function addBleSendListener(buttonId, dataToSend) {
+            document.querySelector(buttonId)
+                .addEventListener('click', function() {
+                    onWriteButtonClick(parseHexString(dataToSend)); 
+                });
+        }
+
+        function checkColour() {
+            var radios = document.getElementsByName('lightsColour');
+
+            for (var i = 0, length = radios.length; i < length; i++) {
+                if (radios[i].checked) {
+                    return radios[i].value;
+                }
+            }
+            return "default";
+        }
+
+        document.querySelector('#lightsBrightness0Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightBrightness0.get(checkColour())));});
+        document.querySelector('#lightsBrightness1Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightBrightness1.get(checkColour())));});
+        document.querySelector('#lightsBrightness2Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightBrightness2.get(checkColour())));});
+        document.querySelector('#lightsBrightness3Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightBrightness3.get(checkColour())));});
+
+        document.querySelector('#lightsPattern1Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern1.get(checkColour())));});
+        document.querySelector('#lightsPattern2Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern2.get(checkColour())));});
+        document.querySelector('#lightsPattern3Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern3.get(checkColour())));});
+        document.querySelector('#lightsPattern4Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern4.get(checkColour())));});
+        document.querySelector('#lightsPattern5Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern5.get(checkColour())));});
+        document.querySelector('#lightsPattern6Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern6.get(checkColour())));});
+        document.querySelector('#lightsPattern7Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern7.get(checkColour())));});
+
+        addBleSendListener("#lightsOnButton", SEND_COMMON_LIGHT_ON);
+        addBleSendListener("#lightsOffButton", SEND_COMMON_LIGHT_OFF);
+
+        addBleSendListener("#lightsColourButton", SEND_COLOR_TYPE_Multi);
+        addBleSendListener("#lightsWhiteButton", SEND_COLOR_TYPE_White);
+
+        addBleSendListener("#lightsColourType1Button", SEND_COLOR_TYPE_ONE);
+        addBleSendListener("#lightsColourType2Button", SEND_COLOR_TYPE_TWO);
+    </script>  
+</body>
