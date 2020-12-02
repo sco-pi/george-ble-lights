@@ -1,6 +1,14 @@
-<!-- run locally with 
-    python -m http.server
--->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>George Smart Lights</title>
+</head>
 <head>
     <script type="text/javascript">
         function log(logMessage) {
@@ -155,38 +163,69 @@
     </script>
 </head>
 <body>
-    <h1>
-        George Smart Lights BLE Test
-    </h1>
-    <input type="button" id="readButton" value="Find Devices" />
-    <input type="button" id="disconnectButton" value="Disconnect" /><br />
-    <br />
-    <input type="button" id="lightsOnButton" value="On" />
-    <input type="button" id="lightsOffButton" value="Off" /><br />
-    <br />
+    <div class="container">
+        <div class="card">
+            <h5 class="card-header">George Smart Lights</h5>
+            <div class="card-body">
+                <p class="card-text">The Android application for the George Smart Lights no longer works with the latest versions of Android, so this site re-implents its communication with WebBluetooth.</p>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
 
-    <input type="radio" id="lightsColourButton" name="lightsColour" value="colour">
-    <label for="lightsColourButton">Colour</label>
-    <input type="radio" id="lightsWhiteButton" name="lightsColour" value="white">
-    <label for="lightsWhiteButton">White</label><br>
+            <object id="svgMap" class="svgClass" type="image/svg+xml" data="JimDriscollWay-Numbering.svg"></object>
+        </div>
 
-    <p>Brightness: 
-    <input type="button" id="lightsBrightness0Button" value="25%" />
-    <input type="button" id="lightsBrightness1Button" value="50%" />
-    <input type="button" id="lightsBrightness2Button" value="75%" />
-    <input type="button" id="lightsBrightness3Button" value="100%" />
-    </p>
+        <div class="card">
+            <div class="card-body">
+                <p>
+                <button type="button" id="readButton" class="btn btn-primary" >Find Devices</button>
+                <button type="button" id="disconnectButton" class="btn btn-danger">Disconnect</button>
+                </p>
 
-    <!-- Combination, In Waves, Sequential, Slow Glow, Chase/Flash, Twinkle/Flash -->
-    <p>Pattern: 
-    <input type="button" id="lightsPattern1Button" value="1" />
-    <input type="button" id="lightsPattern2Button" value="2" />
-    <input type="button" id="lightsPattern3Button" value="3" />
-    <input type="button" id="lightsPattern4Button" value="4" />
-    <input type="button" id="lightsPattern5Button" value="5" />
-    <input type="button" id="lightsPattern6Button" value="6" />
-    <input type="button" id="lightsPattern7Button" value="7" />
-    </p>
+                <p>
+                <button type="button" class="btn btn-primary" id="lightsOnButton">On</button>
+                <button type="button" class="btn btn-primary" id="lightsOffButton">Off</button>
+                </p>
+                
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                    <label class="btn btn-primary">
+                      <input type="radio" name="lightsColour" id="lightsWhiteButton" autocomplete="off" value="white"> White
+                    </label>
+                    <label class="btn btn-primary">
+                      <input type="radio" name="lightsColour" id="lightsColourButton" autocomplete="off" value="colour"> Colour
+                    </label>
+                </div>
+                
+                <p>Brightness: 
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" class="btn btn-secondary" id="lightsBrightness0Button">25%</button>
+                    <button type="button" class="btn btn-secondary" id="lightsBrightness1Button">50%</button>
+                    <button type="button" class="btn btn-secondary" id="lightsBrightness2Button">75%</button>
+                    <button type="button" class="btn btn-secondary" id="lightsBrightness3Button">100%</button>
+                </div>         
+                </p>
+
+                <!-- Combination, In Waves, Sequential, Slow Glow, Chase/Flash, Twinkle/Flash -->
+                <p>Pattern:
+                <table>
+                    <tr>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern1Button">Combination</button></td>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern2Button">In Waves</button></td>
+                    </tr>
+                    <tr>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern3Button">Sequential</button></td>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern4Button">Slow Glow</button></td>
+                    </tr>
+                    <tr>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern5Button">Chase/Flash</button></td>
+                        <td><button type="button" class="btn btn-secondary" id="lightsPattern7Button">Twinkle/Flash</button></td>
+                    </tr>
+                </table>
+                <!-- <input type="button" id="lightsPattern6Button" value="6" /> -->
+                </p>
+            </div>
+        </div>
+    </div>
     
     <!-- <input type="button" id="lightsColourType1Button" value="Colour Type 1" /><br />
     <input type="button" id="lightsColourType2Button" value="Colour Type 2" /><br />
@@ -223,7 +262,7 @@
         document.querySelector('#lightsPattern3Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern3.get(checkColour())));});
         document.querySelector('#lightsPattern4Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern4.get(checkColour())));});
         document.querySelector('#lightsPattern5Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern5.get(checkColour())));});
-        document.querySelector('#lightsPattern6Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern6.get(checkColour())));});
+        //document.querySelector('#lightsPattern6Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern6.get(checkColour())));});
         document.querySelector('#lightsPattern7Button').addEventListener('click', function() {onWriteButtonClick(parseHexString(lightPattern7.get(checkColour())));});
 
         addBleSendListener("#lightsOnButton", SEND_COMMON_LIGHT_ON);
@@ -232,10 +271,22 @@
         addBleSendListener("#lightsColourButton", SEND_COLOR_TYPE_Multi);
         addBleSendListener("#lightsWhiteButton", SEND_COLOR_TYPE_White);
 
-        addBleSendListener("#lightsColourType1Button", SEND_COLOR_TYPE_ONE);
-        addBleSendListener("#lightsColourType2Button", SEND_COLOR_TYPE_TWO);
+        //addBleSendListener("#lightsColourType1Button", SEND_COLOR_TYPE_ONE);
+        //addBleSendListener("#lightsColourType2Button", SEND_COLOR_TYPE_TWO);
     </script> 
-    
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
     <script data-goatcounter="https://sco-pi.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </body>
+<!-- run locally with 
+    python -m http.server
+-->
+</html>
